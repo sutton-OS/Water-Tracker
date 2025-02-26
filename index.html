@@ -8,119 +8,151 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"></noscript>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --bg: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
+            --completed: #e0f2fe;
+            --completed-border: #38bdf8;
+        }
         body {
             font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            overflow-x: hidden; /* Prevents horizontal scrolling */
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden;
             margin: 0;
         }
-        .tracker {
-            width: 100%;
-            max-width: 800px; /* Caps width on larger screens */
+        .tracker-container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 1rem;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 10px;
-            box-sizing: border-box; /* Ensures padding doesn’t add to width */
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p {
+            color: #4b5563;
+            max-width: 600px;
+            margin: 0 auto 1rem;
+            line-height: 1.6;
+            text-align: center;
+            font-size: 0.875rem;
         }
         .week {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Flexible columns */
-            gap: 5px;
-            margin-bottom: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #f9fafb;
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: transform 0.2s;
+        }
+        .week:hover {
+            transform: translateY(-2px);
         }
         .day {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease;
+            min-height: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 5px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            position: relative;
         }
-        .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .day:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
         }
-        .emoji {
-            font-size: 20px;
+        .day.completed {
+            background: var(--completed);
+            border-color: var(--completed-border);
         }
-        .date {
-            font-size: 8px;
-            color: #666;
-            font-weight: 400;
+        .emoji, .checkmark {
+            font-size: 1rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
         .checkmark {
             display: none;
-            font-size: 16px;
+            animation: pop 0.3s ease;
         }
-        .day.completed .content {
+        .day.completed .emoji {
             display: none;
         }
         .day.completed .checkmark {
-            display: block;
+            display: inline;
         }
-        .day:hover, .day:focus {
-            outline: 2px solid blue;
-        }
-        h1 {
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-            margin: 10px 0;
-        }
-        p {
-            font-size: 12px;
-            font-weight: 400;
-            text-align: center;
-            margin: 0 0 10px;
+        .date {
+            font-size: 0.6rem;
+            color: #6b7280;
+            margin-top: 0.125rem;
+            font-weight: 500;
         }
         #reset {
-            display: block;
-            margin: 20px auto;
-            padding: 8px 16px;
-            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
-            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem auto 0;
+            font-size: 0.875rem;
         }
-        /* Media query for larger screens */
-        @media (min-width: 600px) {
-            .tracker {
-                padding: 20px;
-            }
-            .week {
-                grid-template-columns: repeat(7, 1fr); /* 7 columns on desktop */
-                gap: 10px;
-            }
-            .day {
-                padding: 10px;
-            }
-            .emoji {
-                font-size: 24px;
-            }
-            .checkmark {
-                font-size: 18px;
-            }
-            h1 {
-                font-size: 24px;
-            }
-            p {
-                font-size: 14px;
-            }
-            #reset {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
+        #reset:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @media (min-width: 768px) {
+            body { padding: 2rem 1rem; }
+            .tracker-container { padding: 2rem; }
+            h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+            p { font-size: 1rem; margin-bottom: 2rem; }
+            .week { grid-template-columns: repeat(7, 1fr); margin-bottom: 2rem; padding: 1.5rem; }
+            .day { padding: 1.25rem; min-height: 60px; }
+            .emoji, .checkmark { font-size: 1.75rem; }
+            .date { font-size: 0.75rem; margin-top: 0.25rem; }
+            #reset { padding: 0.75rem 2rem; font-size: 1rem; margin: 2rem auto 0; }
         }
     </style>
 </head>
 <body>
-    <h1>16-Week Water Tracker</h1>
-   
-    <div class="tracker"></div>
-    <button id="reset">Reset Progress</button>
-
+    <div class="tracker-container">
+        <h1>16-Week Water Tracker</h1>
+        <p>Track your daily water intake over 16 weeks from 02/26 to 06/18. Click each emoji to mark your progress and celebrate with confetti!</p>
+        <div class="tracker"></div>
+        <button id="reset">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+            </svg>
+            Reset Progress
+        </button>
+    </div>
     <script>
         const weekEmojis = [
             '🌵', '🏜️', '🦂', '🦎', '🌴', '🍊', '🪁', '☀️',
@@ -152,11 +184,9 @@
                 dayButton.dataset.week = weekIndex + 1;
                 dayButton.dataset.day = day;
                 dayButton.innerHTML = `
-                    <div class="content">
-                        <span class="emoji">${emoji}</span>
-                        <span class="date">${formatDate(dates[index])}</span>
-                    </div>
-                    <div class="checkmark">✔️</div>
+                    <span class="emoji">${emoji}</span>
+                    <span class="checkmark">✔️</span>
+                    <span class="date">${formatDate(dates[index])}</span>
                 `;
                 dayButton.title = `Week ${weekIndex + 1} Day ${day} - ${formatDate(dates[index])}`;
                 dayButton.setAttribute('aria-label', `Week ${weekIndex + 1} Day ${day} - ${formatDate(dates[index])}`);
@@ -174,33 +204,27 @@
                         const rect = this.getBoundingClientRect();
                         const date = formatDate(dates[index]);
                         if (date === '04/20') {
-                            // Emoji sunglasses faces effect for 04/20
                             for (let i = 0; i < 100; i++) {
                                 const emoji = document.createElement('div');
                                 emoji.style.position = 'fixed';
                                 emoji.style.left = `${Math.random() * 100}%`;
-                                emoji.style.top = `-50px`; // Start above the viewport
+                                emoji.style.top = `-50px`;
                                 emoji.style.fontSize = '24px';
                                 emoji.innerText = '😎';
                                 document.body.appendChild(emoji);
-                                
-                                // Animate the emoji to fall down
-                                const duration = Math.random() * 2000 + 2000; // Random duration between 2-4 seconds
+                                const duration = Math.random() * 2000 + 2000;
                                 emoji.animate([
                                     { transform: 'translateY(0)' },
-                                    { transform: `translateY(${window.innerHeight + 50}px)` } // Move to below the viewport
+                                    { transform: `translateY(${window.innerHeight + 50}px)` }
                                 ], {
                                     duration: duration,
                                     easing: 'linear',
                                     iterations: 1,
                                     fill: 'forwards'
                                 });
-
-                                // Remove the emoji after the animation is complete
                                 setTimeout(() => emoji.remove(), duration);
                             }
                         } else {
-                            // Default confetti effect
                             confetti({
                                 particleCount: 50,
                                 spread: 30,
@@ -211,7 +235,7 @@
                             });
                         }
                         if ('vibrate' in navigator) {
-                            navigator.vibrate(50); // Haptic feedback
+                            navigator.vibrate(50);
                         }
                     } else {
                         this.classList.remove('completed');
